@@ -6,6 +6,14 @@ import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+const isProd = process.env.NODE_ENV === "production" || process.env.RENDER;
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: isProd ? "none" : "lax",
+  secure: isProd,
+  path: "/",
+};
+
 router.post("/register", async (req, res) => {
   try {
     const { rollNo, password } = req.body;
@@ -30,11 +38,7 @@ router.post("/register", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-    });
+    res.cookie("token", token, cookieOptions);
 
     res.status(201).json({ message: "Registration successful" });
   } catch (error) {
@@ -60,11 +64,7 @@ router.get("/check", authMiddleware, async (req, res) => {
 
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",      // MUST MATCH LOGIN
-  });
+  res.clearCookie("token", cookieOptions);
   res.json({ message: "Logged out" });
 });
 
@@ -92,11 +92,7 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-    });
+    res.cookie("token", token, cookieOptions);
 
     res.json({ message: "Login successful" });
   } catch (error) {
