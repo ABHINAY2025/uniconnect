@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from pipeline import process_raw_text
+from semantic_engine.pipeline import process_raw_text
 
 app = FastAPI()
 

@@ -48,7 +48,8 @@ export const getMyExperiences = async (req, res) => {
 
 const triggerMLProcessing = async (experience) => {
   try {
-    const response = await fetch("http://localhost:8000/process-experience", {
+    const mlUrl = process.env.ML_SERVICE_URL || "http://localhost:8000";
+    const response = await fetch(`${mlUrl}/process-experience`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
