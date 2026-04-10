@@ -34,28 +34,40 @@ router.post("/logout", (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { rollNo, password } = req.body;
+  try {
+    const { rollNo, password } = req.body;
 
-  const user = await User.findOne({ rollNo });
-  console.log("User from DB:", user);
+    if (!rollNo || !password) {
+      return res.status(400).json({ message: "Roll number and password are required" });
+    }
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  console.log("Password match:", isMatch);
+    const user = await User.findOne({ rollNo });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
-  const token = jwt.sign(
-    { id: user._id, rollNo: user.rollNo },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+    const token = jwt.sign(
+      { id: user._id, rollNo: user.rollNo },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-  res.cookie("token", token, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-  });
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+    });
 
-  res.json({ message: "Login successful" });
+    res.json({ message: "Login successful" });
+  } catch (error) {
+    console.error("Login error:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 export default router;
