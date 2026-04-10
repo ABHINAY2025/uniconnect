@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { API_BASE } from "../config";
 
 const ChatInterface = () => {
     const { itemId, receiverId } = useParams();
@@ -11,7 +12,7 @@ const ChatInterface = () => {
 
     // Fetch current user
     useEffect(() => {
-        fetch("http://localhost:5000/api/auth/check", { credentials: "include" })
+        fetch(`${API_BASE}/api/auth/check`, { credentials: "include" })
             .then(res => res.json())
             .then(data => setCurrentUser(data.user))
             .catch(err => console.error("Auth check failed", err));
@@ -23,7 +24,7 @@ const ChatInterface = () => {
 
         const fetchMessages = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/lost-found/message/conversation?itemId=${itemId}&user1=${currentUser.rollNo}&user2=${receiverId}`);
+                const res = await fetch(`${API_BASE}/api/lost-found/message/conversation?itemId=${itemId}&user1=${currentUser.rollNo}&user2=${receiverId}`);
                 if (res.ok) {
                     const data = await res.json();
                     setMessages(data);
@@ -49,7 +50,7 @@ const ChatInterface = () => {
         if (!newMessage.trim() || !currentUser) return;
 
         try {
-            const res = await fetch("http://localhost:5000/api/lost-found/message/send", {
+            const res = await fetch(`${API_BASE}/api/lost-found/message/send`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

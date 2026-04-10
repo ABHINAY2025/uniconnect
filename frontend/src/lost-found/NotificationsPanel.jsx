@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../config';
 
 const NotificationsPanel = () => {
     const navigate = useNavigate();
@@ -11,7 +12,7 @@ const NotificationsPanel = () => {
         const fetchNotifications = async () => {
             try {
                 // 1. Get Current User
-                const authRes = await fetch("http://localhost:5000/api/auth/check", { credentials: "include" });
+                const authRes = await fetch(`${API_BASE}/api/auth/check`, { credentials: "include" });
                 const authData = await authRes.json();
 
                 if (!authData.user) {
@@ -21,7 +22,7 @@ const NotificationsPanel = () => {
                 setCurrentUser(authData.user);
 
                 // 2. Fetch Notifications
-                const res = await fetch(`http://localhost:5000/api/lost-found/notifications?userId=${authData.user.rollNo}`);
+                const res = await fetch(`${API_BASE}/api/lost-found/notifications?userId=${authData.user.rollNo}`);
                 const data = await res.json();
                 setNotifications(data);
             } catch (error) {
@@ -77,7 +78,7 @@ const NotificationsPanel = () => {
                                         e.stopPropagation();
                                         if (window.confirm("Delete this notification?")) {
                                             try {
-                                                await fetch(`http://localhost:5000/api/lost-found/notifications/${notif._id}`, { method: "DELETE" });
+                                                await fetch(`${API_BASE}/api/lost-found/notifications/${notif._id}`, { method: "DELETE" });
                                                 setNotifications(notifications.filter(n => n._id !== notif._id));
                                             } catch (err) {
                                                 alert("Failed to delete");

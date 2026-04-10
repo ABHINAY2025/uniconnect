@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE } from "../config";
 
 const LostFoundHome = () => {
     const navigate = useNavigate();
@@ -8,7 +9,7 @@ const LostFoundHome = () => {
     const [showPointsModal, setShowPointsModal] = useState(false);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/auth/check", {
+        fetch(`${API_BASE}/api/auth/check`, {
             credentials: "include",
         })
             .then((res) => {

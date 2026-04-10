@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { API_BASE } from "../config";
 
 const ItemDetails = () => {
     const { id } = useParams();
@@ -11,13 +12,13 @@ const ItemDetails = () => {
 
     useEffect(() => {
         // Fetch User
-        fetch("http://localhost:5000/api/auth/check", { credentials: "include" })
+        fetch(`${API_BASE}/api/auth/check`, { credentials: "include" })
             .then(res => res.json())
             .then(data => setCurrentUser(data.user))
             .catch(err => console.error("Auth check failed", err));
 
         // Fetch Item
-        fetch(`http://localhost:5000/api/lost-found/item/${id}`)
+        fetch(`${API_BASE}/api/lost-found/item/${id}`)
             .then(res => res.json())
             .then(data => setItem(data))
             .catch(err => console.error("Fetch item failed", err));
@@ -27,7 +28,7 @@ const ItemDetails = () => {
 
     useEffect(() => {
         if (isMe && item && currentUser && item.status !== 'closed') {
-            fetch(`http://localhost:5000/api/lost-found/message/conversations-list?itemId=${item._id}&userId=${currentUser.rollNo}`)
+            fetch(`${API_BASE}/api/lost-found/message/conversations-list?itemId=${item._id}&userId=${currentUser.rollNo}`)
                 .then(res => res.json())
                 .then(data => setConversations(data))
                 .catch(err => console.error("Fetch conversations failed", err));
@@ -102,7 +103,7 @@ const ItemDetails = () => {
                                         <button
                                             onClick={() => {
                                                 if (window.confirm(`Is this your item? Confirming receipt will close this case and award recognition points to User ${item.reportedBy} for finding it.`)) {
-                                                    fetch("http://localhost:5000/api/lost-found/solve", {
+                                                    fetch(`${API_BASE}/api/lost-found/solve`, {
                                                         method: "POST",
                                                         headers: { "Content-Type": "application/json" },
                                                         // Here 'finderId' is the reporter of the found item
@@ -163,7 +164,7 @@ const ItemDetails = () => {
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 if (window.confirm(`Did User ${conv.partnerId} return your item? This will close the case and award them recognition points.`)) {
-                                                                    fetch("http://localhost:5000/api/lost-found/solve", {
+                                                                    fetch(`${API_BASE}/api/lost-found/solve`, {
                                                                         method: "POST",
                                                                         headers: { "Content-Type": "application/json" },
                                                                         body: JSON.stringify({ itemId: item._id, finderId: conv.partnerId })

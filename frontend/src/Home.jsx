@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { API_BASE } from "./config";
 
 const Home = () => {
     const navigate = useNavigate();
     const [rollNo, setRollNo] = useState("Loading...");
 
     const handleLogout = async () => {
-        await fetch("http://localhost:5000/api/auth/logout", {
+        await fetch(`${API_BASE}/api/auth/logout`, {
             method: "POST",
             credentials: "include",
         });
@@ -15,7 +16,7 @@ const Home = () => {
     };
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/auth/check", {
+        fetch(`${API_BASE}/api/auth/check`, {
             credentials: "include",
         })
             .then((res) => res.json())

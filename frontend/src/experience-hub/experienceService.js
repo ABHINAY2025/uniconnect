@@ -1,5 +1,7 @@
+import { API_BASE } from "../config";
+
 export const createExperience = async (data) => {
-  const response = await fetch("http://localhost:5000/api/experience", {
+  const response = await fetch(`${API_BASE}/api/experience`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -16,7 +18,7 @@ export const createExperience = async (data) => {
 };
 
 export const fetchMyExperiences = async () => {
-  const response = await fetch("http://localhost:5000/api/experience", {
+  const response = await fetch(`${API_BASE}/api/experience`, {
     credentials: "include",
   });
 
@@ -35,7 +37,7 @@ export const searchQuestions = async ({ subject, company }) => {
   }
 
   const response = await fetch(
-    `http://localhost:5000/api/experience/search?${params.toString()}`,
+    `${API_BASE}/api/experience/search?${params.toString()}`,
     { credentials: "include" }
   );
 

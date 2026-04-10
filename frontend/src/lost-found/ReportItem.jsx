@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { API_BASE } from "../config";
 
 const ReportItem = () => {
     const { type } = useParams(); // 'lost' or 'found'
@@ -12,7 +13,7 @@ const ReportItem = () => {
 
     // Fetch current user for 'reportedBy'
     useEffect(() => {
-        fetch("http://localhost:5000/api/auth/check", {
+        fetch(`${API_BASE}/api/auth/check`, {
             credentials: "include",
         })
             .then(res => res.json())
@@ -40,7 +41,7 @@ const ReportItem = () => {
         };
 
         try {
-            const response = await fetch("http://localhost:5000/api/lost-found/report", {
+            const response = await fetch(`${API_BASE}/api/lost-found/report`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
