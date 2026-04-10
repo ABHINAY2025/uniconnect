@@ -7,25 +7,30 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isRegister, setIsRegister] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
+    const endpoint = isRegister ? "register" : "login";
+
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
+      const res = await fetch(`${API_BASE}/api/auth/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ rollNo, password }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
         navigate("/home");
       } else {
-        setError("Invalid credentials. Please try again.");
+        setError(data.message || "Something went wrong. Please try again.");
       }
     } catch (err) {
       setError("Something went wrong. Please check your connection.");
@@ -43,11 +48,11 @@ const Login = () => {
       <div className="w-full max-w-md p-8 relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
         <div className="text-center mb-10">
           <h1 className="text-4xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">UniConnect</h1>
-          <p className="text-slate-500 font-medium">Welcome back! Please login to continue.</p>
+          <p className="text-slate-500 font-medium">{isRegister ? "Create your account to get started." : "Welcome back! Please login to continue."}</p>
         </div>
 
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-indigo-100 border border-white p-8">
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-600 text-sm font-semibold border border-red-100 flex items-center gap-2">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
@@ -96,14 +101,25 @@ const Login = () => {
                 <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  Sign In <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                  {isRegister ? "Sign Up" : "Sign In"} <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
                 </>
               )}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-slate-400 text-sm mt-8">
+        <p className="text-center text-slate-500 text-sm mt-6">
+          {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
+          <button
+            type="button"
+            onClick={() => { setIsRegister(!isRegister); setError(""); }}
+            className="text-blue-600 font-semibold hover:underline"
+          >
+            {isRegister ? "Sign In" : "Sign Up"}
+          </button>
+        </p>
+
+        <p className="text-center text-slate-400 text-sm mt-4">
           © 2024 UniConnect. Campus Life Simplified.
         </p>
       </div>

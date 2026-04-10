@@ -6,7 +6,42 @@ import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+router.post("/register", async (req, res) => {
+  try {
+    const { rollNo, password } = req.body;
 
+    if (!rollNo || !password) {
+      return res.status(400).json({ message: "Roll number and password are required" });
+    }
+
+    const existing = await User.findOne({ rollNo });
+    if (existing) {
+      return res.status(409).json({ message: "Roll number already registered" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.create({ rollNo, password: hashedPassword });
+
+    const token = jwt.sign(
+      { id: user._id, rollNo: user.rollNo },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    res.status(201).json({ message: "Registration successful" });
+  } catch (error) {
+    console.error("Register error:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 router.get("/check", authMiddleware, async (req, res) => {
   try {
