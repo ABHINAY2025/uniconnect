@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from semantic_engine.pipeline import process_raw_text
+from semantic_engine.pipeline import process_experience
 
 app = FastAPI()
 
@@ -13,4 +13,4 @@ class Request(BaseModel):
 
 @app.post("/analyze")
 def analyze(req: Request):
-    return process_raw_text(req.text)
+    return process_experience(req.text)
