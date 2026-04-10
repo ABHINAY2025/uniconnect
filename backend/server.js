@@ -30,6 +30,13 @@ mongoose.connection.once("open", () => {
   console.log("Connected DB name:", mongoose.connection.name);
 });
 
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    db: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+  });
+});
+
 app.use("/api/experience", experienceRoutes);
 app.use("/api/lost-found", lostFoundRoutes);
 
